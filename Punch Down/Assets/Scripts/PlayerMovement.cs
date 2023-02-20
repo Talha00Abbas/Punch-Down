@@ -17,12 +17,12 @@ public class PlayerMovement : MonoBehaviour
     public Transform firePoint;
     public enum Abilities { Fade, Hyper, RapidFire, PunchDown };
 
-
-
     [Header("Stats")]
     public float moveSpeed = 11f;
     public float maxForce = 1;  //max Move Speed
     public float steerPower = 3f;
+    public int maxHealth = 5;
+    public int health;
     
 
     [Header("Bullet Quality")]
@@ -42,8 +42,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+
         controls = new PlayerControls();
         actions = controls.Player;
+        health = maxHealth;
 
         actions.Fire.started += _ => StartFiring();
         actions.Fire.canceled += _ => StopFiring();
@@ -59,6 +61,10 @@ public class PlayerMovement : MonoBehaviour
     {
         bulletTime -= Time.deltaTime;
         abilityTime -= Time.deltaTime;
+        if (health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
     private void FixedUpdate()
     {
@@ -70,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (abilityTime <= 0)
         {
             AbilitySystem(abilities);
+            abilityTime = abilityStartTime;
         }
     }
 
@@ -119,6 +126,16 @@ public class PlayerMovement : MonoBehaviour
     void N_Rapid() 
     {
         startTime = 4f;
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            health -= 1;
+            Destroy(collision.gameObject);
+        }
     }
 
     void Move() 

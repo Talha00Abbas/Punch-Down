@@ -8,7 +8,6 @@ public class DestroyMe : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Destroyed" + name);
         Destroy(this.gameObject, destroyTime);
     }
 }
